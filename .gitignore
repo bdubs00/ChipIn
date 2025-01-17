@@ -1,0 +1,18 @@
+﻿# ---- build artefacts ----
+cmake-build-*/
+build/
+*.elf
+*.uf2
+*.hex
+*.map
+
+# ---- CLion & CMake junk ----
+.idea/
+compile_commands.json
+CMakeUserPresets.json
+CMakeCache.txt
+CMakeFiles/
+
+# ---- OS clutter ----
+.DS_Store
+Thumbs.db
