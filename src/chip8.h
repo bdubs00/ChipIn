@@ -35,5 +35,7 @@ typedef struct {
 
 // Function prototypes
 void chip8_init(ChipIn_t* cpu);
+bool chip8_load_rom(ChipIn_t* cpu, const char* filename);
+void chip8_execute_cycle(ChipIn_t* cpu);
 
 #endif //CHIP8_H

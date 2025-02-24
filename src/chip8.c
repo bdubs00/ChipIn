@@ -39,3 +39,35 @@ void chip8_init(ChipIn_t* cpu) {
     // Initialize random seed
     srand(time(NULL));
 }
+
+bool chip8_load_rom(ChipIn_t* cpu, const char* filename) {
+    FILE* rom_file = fopen(filename, "rb");
+    if (!rom_file) {
+        printf("Failed to open ROM file: %s\n", filename);
+        return false;
+    }
+
+    // Get file size
+    fseek(rom_file, 0, SEEK_END);
+    long rom_size = ftell(rom_file);
+    rewind(rom_file);
+
+    // Check if ROM fits in memory
+    if (rom_size > (MEMORY_SIZE - ROM_START_ADDRESS)) {
+        printf("ROM file too large: %ld bytes\n", rom_size);
+        fclose(rom_file);
+        return false;
+    }
+
+    // Read ROM into memory
+    size_t result = fread(&cpu->memory[ROM_START_ADDRESS], 1, rom_size, rom_file);
+    if (result != rom_size) {
+        printf("Failed to read ROM file\n");
+        fclose(rom_file);
+        return false;
+    }
+
+    fclose(rom_file);
+    printf("Loaded ROM: %s (%ld bytes)\n", filename, rom_size);
+    return true;
+}
