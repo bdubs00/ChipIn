@@ -1,9 +1,3 @@
-﻿// ChipIn - CHIP-8 Emulator
-// Main entry point
-
-#include <stdio.h>
-
-int main() {
-    printf("ChipIn CHIP-8 Emulator\n");
-    return 0;
-}
+﻿//
+// Created by brand on 6/16/2025.
+//
