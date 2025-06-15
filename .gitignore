@@ -16,3 +16,4 @@ CMakeFiles/
 # ---- OS clutter ----
 .DS_Store
 Thumbs.db
+pico-sdk/
