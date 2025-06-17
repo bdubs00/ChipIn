@@ -1,14 +1,35 @@
 cmake_minimum_required(VERSION 3.13)
 
-# ---------------------------------------------------------------------------
 option(BUILD_FOR_PICO "Build firmware for Raspberry Pi Pico" OFF)
-# ---------------------------------------------------------------------------
 
 # bootstrap
 
 if(BUILD_FOR_PICO)
-    set(PICO_SDK_PATH "C:/Program Files/Raspberry Pi/Pico SDK v1.5.1/pico-sdk"
-            CACHE PATH "Location of the Pico SDK")
+    if(NOT DEFINED PICO_SDK_PATH)
+        if(DEFINED ENV{PICO_SDK_PATH})
+            set(PICO_SDK_PATH $ENV{PICO_SDK_PATH} CACHE PATH "Location of the Pico SDK")
+        else()
+            # fallback paths
+            if(WIN32)
+                set(PICO_SDK_PATH "C:/Program Files/Raspberry Pi/Pico SDK v1.5.1/pico-sdk"
+                        CACHE PATH "Location of the Pico SDK")
+            elseif(UNIX AND NOT APPLE)
+                set(PICO_SDK_PATH "/usr/share/pico-sdk"
+                        CACHE PATH "Location of the Pico SDK")
+            elseif(APPLE)
+                set(PICO_SDK_PATH "/opt/pico-sdk"
+                        CACHE PATH "Location of the Pico SDK")
+            endif()
+        endif()
+    endif()
+
+    # verify the SDK path exists
+    if(NOT EXISTS "${PICO_SDK_PATH}")
+        message(FATAL_ERROR "PICO_SDK_PATH not found: ${PICO_SDK_PATH}\n"
+                "Please set the PICO_SDK_PATH environment variable or CMake cache variable")
+    endif()
+
+    message(STATUS "Using Pico SDK at: ${PICO_SDK_PATH}")
 
     set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
     include("${PICO_SDK_PATH}/external/pico_sdk_import.cmake")
@@ -44,7 +65,7 @@ else()
             src/hal_sdl.c
             src/chip8.h)
 
-    # Link against both SDL2 and SDL2main
+    # link against both SDL2 and SDL2main
     if(WIN32)
         target_link_libraries(chipin_desktop PRIVATE
                 SDL2::SDL2main
@@ -53,7 +74,7 @@ else()
         target_link_libraries(chipin_desktop PRIVATE SDL2::SDL2)
     endif()
 
-    # Ensure console subsystem on Windows
+    # ensure console subsystem on Windows
     if(WIN32 AND MINGW)
         set_target_properties(chipin_desktop PROPERTIES
                 LINK_FLAGS "-mconsole")
