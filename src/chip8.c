@@ -150,8 +150,9 @@ void chip8_execute_cycle(ChipIn_t* cpu) {
                 case 0x4: // ADD Vx, Vy - Set Vx = Vx + Vy, set VF = carry
                     {
                         uint16_t sum = cpu->V[x] + cpu->V[y];
-                        cpu->V[0xF] = (sum > 0xFF) ? 1 : 0;
+                        uint8_t carry = (sum > 0xFF) ? 1 : 0;
                         cpu->V[x] = sum & 0xFF;
+                        cpu->V[0xF] = carry;
                     }
                     break;
                 case 0x5: // SUB Vx, Vy - Set Vx = Vx - Vy, set VF = NOT borrow
