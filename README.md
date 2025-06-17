@@ -2,6 +2,15 @@
 
 A portable CHIP-8 emulator that runs on both desktop (SDL2) and Raspberry Pi Pico!
 
+opcode tests:
+
+![Corax](docs/images/corax.png)
+![Flags](docs/images/flags.png)
+
+Br8kout (my personal favorite):
+
+![Br8kout](docs/images/br8kout.png)
+
 ## Features
 
 - Complete CHIP-8 instruction set implementation
