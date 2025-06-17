@@ -156,8 +156,9 @@ void chip8_execute_cycle(ChipIn_t* cpu) {
                     }
                     break;
                 case 0x5: // SUB Vx, Vy - Set Vx = Vx - Vy, set VF = NOT borrow
-                    cpu->V[0xF] = (cpu->V[x] > cpu->V[y]) ? 1 : 0;
-                    cpu->V[x] -= cpu->V[y];
+                    uint8_t not_borrow = (cpu->V[x] >= cpu->V[y]) ? 1 : 0;
+                    cpu->V[x] = cpu->V[x] - cpu->V[y];
+                    cpu->V[0xF] = not_borrow;
                     break;
                 case 0x6: // SHR Vx - Set Vx = Vx SHR 1
                     cpu->V[0xF] = cpu->V[x] & 0x1;
