@@ -161,8 +161,9 @@ void chip8_execute_cycle(ChipIn_t* cpu) {
                     cpu->V[0xF] = not_borrow_5;
                     break;
                 case 0x6: // SHR Vx - Set Vx = Vx SHR 1
-                    cpu->V[0xF] = cpu->V[x] & 0x1;
-                    cpu->V[x] >>= 1;
+                    uint8_t lsb = cpu->V[y] & 0x1;
+                    cpu->V[x] = cpu->V[y] >> 1;
+                    cpu->V[0xF] = lsb;
                     break;
                 case 0x7: // SUBN Vx, Vy - Set Vx = Vy - Vx, set VF = NOT borrow
                     uint8_t not_borrow_7 = (cpu->V[y] >= cpu->V[x]) ? 1 : 0;
@@ -170,8 +171,9 @@ void chip8_execute_cycle(ChipIn_t* cpu) {
                     cpu->V[0xF] = not_borrow_7;
                     break;
                 case 0xE: // SHL Vx - Set Vx = Vx SHL 1
-                    cpu->V[0xF] = (cpu->V[x] & 0x80) >> 7;
-                    cpu->V[x] <<= 1;
+                    uint8_t msb = (cpu->V[y] & 0x80) >> 7;
+                    cpu->V[x] = cpu->V[y] << 1;
+                    cpu->V[0xF] = msb;
                     break;
             }
             break;
