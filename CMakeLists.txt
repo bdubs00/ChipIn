@@ -1,4 +1,4 @@
-﻿cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.13)
 
 # ---------------------------------------------------------------------------
 option(BUILD_FOR_PICO "Build firmware for Raspberry Pi Pico" OFF)
@@ -11,15 +11,14 @@ if(BUILD_FOR_PICO)
             CACHE PATH "Location of the Pico SDK")
 
     set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
-    include("/external/pico_sdk_import.cmake")
+    include("${PICO_SDK_PATH}/external/pico_sdk_import.cmake")
     set(LANG_LIST C CXX ASM)
 else()
     set(LANG_LIST C CXX)
 endif()
 
-project(ChipIn LANGUAGES )
+project(ChipIn LANGUAGES ${LANG_LIST})
 set(CMAKE_C_STANDARD 11)
-
 
 if(BUILD_FOR_PICO)
     pico_sdk_init()
@@ -45,5 +44,18 @@ else()
             src/hal_sdl.c
             src/chip8.h)
 
-    target_link_libraries(chipin_desktop PRIVATE SDL2::SDL2)
+    # Link against both SDL2 and SDL2main
+    if(WIN32)
+        target_link_libraries(chipin_desktop PRIVATE
+                SDL2::SDL2main
+                SDL2::SDL2)
+    else()
+        target_link_libraries(chipin_desktop PRIVATE SDL2::SDL2)
+    endif()
+
+    # Ensure console subsystem on Windows
+    if(WIN32 AND MINGW)
+        set_target_properties(chipin_desktop PROPERTIES
+                LINK_FLAGS "-mconsole")
+    endif()
 endif()
